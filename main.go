@@ -136,13 +136,17 @@ type GitHubStats struct {
 
 func drawChart(c echo.Context) error {
 	// get token for this user
-	userName := c.Param("user")
-	token, err := rds.Get("token:" + userName).Result()
+	authUser := c.QueryParam("user") // because a user name may be used to authorize others' repos
+	if authUser == "" {
+		authUser = c.Param("user") // the default
+	}
+
+	token, err := rds.Get("token:" + authUser).Result()
 	if err != nil {
 		return echo.NewHTTPError(404, "user doesn't have a valid GitHub token registered.")
 	}
 
-	repo := userName + "/" + c.Param("repo")
+	repo := c.Param("user") + "/" + c.Param("repo")
 	stats := GitHubStats{}
 	log.Print("~ view: " + repo)
 
@@ -162,7 +166,7 @@ func drawChart(c echo.Context) error {
 		headers.Set("Accept", "application/vnd.github.v3+json")
 		headers.Set("Authorization", "token "+token)
 		if _, err = napping.Send(&napping.Request{
-			Url:    "https://api.github.com/repos/" + userName + "/" + c.Param("repo") + "/traffic/views",
+			Url:    "https://api.github.com/repos/" + repo + "/traffic/views",
 			Method: "GET",
 			Header: headers,
 			Result: &stats,
