@@ -174,7 +174,6 @@ func drawChart(c echo.Context) error {
 			return err
 		} else if len(stats.Views) == 0 {
 			log.Print("no data received from GitHub.")
-			return echo.NewHTTPError(502, "no data received from GitHub.")
 		}
 
 		// cache results on redis
