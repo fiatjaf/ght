@@ -1,0 +1,128 @@
+{
+	"ImportPath": "github.com/fiatjaf/github-stats",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v75",
+	"Deps": [
+		{
+			"ImportPath": "github.com/golang/freetype/raster",
+			"Comment": "release-137-ge2365df",
+			"Rev": "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4"
+		},
+		{
+			"ImportPath": "github.com/golang/freetype/truetype",
+			"Comment": "release-137-ge2365df",
+			"Rev": "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4"
+		},
+		{
+			"ImportPath": "github.com/kelseyhightower/envconfig",
+			"Comment": "v1.0.0-26-g12c18e8",
+			"Rev": "12c18e8343f6eb5fc3a9d5c8dc353e42e6bb40b9"
+		},
+		{
+			"ImportPath": "github.com/labstack/echo",
+			"Comment": "v3.1.0-rc.1-24-g0d23a63",
+			"Rev": "0d23a63a965a0f709657a4515778968542890552"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/color",
+			"Comment": "v0.2.1",
+			"Rev": "1121fd3e243c202482226a7afe4dcd07ffc4139a"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/log",
+			"Comment": "v0.2.1",
+			"Rev": "1121fd3e243c202482226a7afe4dcd07ffc4139a"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.7-24-gded68f7",
+			"Rev": "ded68f7a9561c023e790de24279db7ebf473ea80"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.2",
+			"Rev": "fc9e8d8ef48496124e79ae0df75490096eccf6fe"
+		},
+		{
+			"ImportPath": "github.com/valyala/bytebufferpool",
+			"Rev": "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+		},
+		{
+			"ImportPath": "github.com/valyala/fasttemplate",
+			"Rev": "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
+		},
+		{
+			"ImportPath": "github.com/wcharczuk/go-chart",
+			"Comment": "v2.0-43-g66b99eb",
+			"Rev": "66b99eb8e38fd849fe4a78262d0fac8fcd46dc71"
+		},
+		{
+			"ImportPath": "github.com/wcharczuk/go-chart/drawing",
+			"Comment": "v2.0-43-g66b99eb",
+			"Rev": "66b99eb8e38fd849fe4a78262d0fac8fcd46dc71"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/acme",
+			"Rev": "5a033cc77e57eca05bdb50522851d29e03569cbe"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/acme/autocert",
+			"Rev": "5a033cc77e57eca05bdb50522851d29e03569cbe"
+		},
+		{
+			"ImportPath": "golang.org/x/image/draw",
+			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+		},
+		{
+			"ImportPath": "golang.org/x/image/font",
+			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+		},
+		{
+			"ImportPath": "golang.org/x/image/math/f64",
+			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+		},
+		{
+			"ImportPath": "golang.org/x/image/math/fixed",
+			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "f64b50fbea64174967a8882830d621a18ee1548e"
+		},
+		{
+			"ImportPath": "gopkg.in/jmcvetta/napping.v3",
+			"Comment": "v3.1.0",
+			"Rev": "5be8267a453ffa5b80c4af7fa4cfc1d04d3cfd5c"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5",
+			"Comment": "v5.2.4",
+			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal",
+			"Comment": "v5.2.4",
+			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/consistenthash",
+			"Comment": "v5.2.4",
+			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/hashtag",
+			"Comment": "v5.2.4",
+			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/pool",
+			"Comment": "v5.2.4",
+			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/proto",
+			"Comment": "v5.2.4",
+			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		}
+	]
+}
