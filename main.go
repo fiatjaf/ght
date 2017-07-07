@@ -52,6 +52,10 @@ func main() {
 	log.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
 
+func index(c echo.Context) error {
+	return c.Redirect(302, "https://github.com/fiatjaf/github-traffic")
+}
+
 func authorize(c echo.Context) error {
 	return c.Redirect(302,
 		"https://github.com/login/oauth/authorize"+
@@ -118,10 +122,6 @@ func authorizeCallback(c echo.Context) error {
 	}
 
 	return c.String(200, "done.")
-}
-
-func index(c echo.Context) error {
-	return c.String(http.StatusOK, "hello")
 }
 
 type GitHubStats struct {
