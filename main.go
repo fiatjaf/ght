@@ -53,7 +53,7 @@ func main() {
 }
 
 func index(c echo.Context) error {
-	return c.Redirect(302, "https://github.com/fiatjaf/github-traffic")
+	return c.Redirect(302, "https://github.com/fiatjaf/ght")
 }
 
 func authorize(c echo.Context) error {
@@ -100,7 +100,7 @@ func authorizeCallback(c echo.Context) error {
 	}{}
 
 	headers.Set("Accept", "application/vnd.github.v3+json")
-	headers.Set("User-Agent", "https://github.com/fiatjaf/github-traffic")
+	headers.Set("User-Agent", "https://github.com/fiatjaf/ght")
 	headers.Set("Authorization", "token "+res.AccessToken)
 	if _, err := napping.Send(&napping.Request{
 		Url:    "https://api.github.com/user",
@@ -162,7 +162,7 @@ func drawChart(c echo.Context) error {
 	} else {
 		// get data from github
 		headers := &http.Header{}
-		headers.Set("User-Agent", "https://github.com/fiatjaf/github-traffic")
+		headers.Set("User-Agent", "https://github.com/fiatjaf/ght")
 		headers.Set("Accept", "application/vnd.github.v3+json")
 		headers.Set("Authorization", "token "+token)
 		if _, err = napping.Send(&napping.Request{
