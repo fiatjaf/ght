@@ -194,6 +194,7 @@ func drawChart(c echo.Context) error {
 		},
 		XValues: make([]time.Time, len(stats.Views)),
 		YValues: make([]float64, len(stats.Views)),
+		YAxis:   chart.YAxisSecondary,
 	}
 	totalPageviews := chart.TimeSeries{
 		Name: "Views",
@@ -204,6 +205,7 @@ func drawChart(c echo.Context) error {
 		},
 		XValues: make([]time.Time, len(stats.Views)),
 		YValues: make([]float64, len(stats.Views)),
+		YAxis:   chart.YAxisPrimary,
 	}
 	for i, stat := range stats.Views {
 		date, _ := time.Parse("2006-01-02T15:04:05Z", stat.Timestamp)
@@ -213,14 +215,14 @@ func drawChart(c echo.Context) error {
 		totalPageviews.YValues[i] = float64(stat.Count)
 	}
 
-	w := 444
-	h := 200
+	w := 460
+	h := 300
 	graph := chart.Chart{
 		Width:  w,
 		Height: h,
 		Series: []chart.Series{uniqueSessions, totalPageviews},
 		Background: chart.Style{
-			Padding: chart.Box{Top: 10, Right: 10, Bottom: 10},
+			Padding: chart.Box{Top: 10, Right: 10, Bottom: 10, Left: 27},
 		},
 		XAxis: chart.XAxis{
 			Style: chart.Style{Show: true},
@@ -229,6 +231,14 @@ func drawChart(c echo.Context) error {
 			},
 		},
 		YAxis: chart.YAxis{
+			Name:           "Views",
+			NameStyle:      chart.StyleShow(),
+			Style:          chart.Style{Show: true},
+			ValueFormatter: func(v interface{}) string { return strconv.Itoa(int(v.(float64))) },
+		},
+		YAxisSecondary: chart.YAxis{
+			Name:           "Unique visitors",
+			NameStyle:      chart.StyleShow(),
 			Style:          chart.Style{Show: true},
 			ValueFormatter: func(v interface{}) string { return strconv.Itoa(int(v.(float64))) },
 		},
