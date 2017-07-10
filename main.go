@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -194,7 +193,7 @@ func drawChart(c echo.Context) error {
 		},
 		XValues: make([]time.Time, len(stats.Views)),
 		YValues: make([]float64, len(stats.Views)),
-		YAxis:   chart.YAxisSecondary,
+		YAxis:   chart.YAxisPrimary,
 	}
 	totalPageviews := chart.TimeSeries{
 		Name: "Views",
@@ -205,8 +204,9 @@ func drawChart(c echo.Context) error {
 		},
 		XValues: make([]time.Time, len(stats.Views)),
 		YValues: make([]float64, len(stats.Views)),
-		YAxis:   chart.YAxisPrimary,
+		YAxis:   chart.YAxisSecondary,
 	}
+
 	for i, stat := range stats.Views {
 		date, _ := time.Parse("2006-01-02T15:04:05Z", stat.Timestamp)
 		uniqueSessions.XValues[i] = date
@@ -215,7 +215,7 @@ func drawChart(c echo.Context) error {
 		totalPageviews.YValues[i] = float64(stat.Count)
 	}
 
-	w := 460
+	w := 800
 	h := 300
 	graph := chart.Chart{
 		Width:  w,
@@ -231,16 +231,20 @@ func drawChart(c echo.Context) error {
 			},
 		},
 		YAxis: chart.YAxis{
-			Name:           "Views",
-			NameStyle:      chart.StyleShow(),
-			Style:          chart.Style{Show: true},
-			ValueFormatter: func(v interface{}) string { return strconv.Itoa(int(v.(float64))) },
+			Name:      "Unique visitors",
+			NameStyle: chart.StyleShow(),
+			Style:     chart.Style{Show: true},
+			ValueFormatter: func(v interface{}) string {
+				return fmt.Sprintf("%.1f", v.(float64))
+			},
 		},
 		YAxisSecondary: chart.YAxis{
-			Name:           "Unique visitors",
-			NameStyle:      chart.StyleShow(),
-			Style:          chart.Style{Show: true},
-			ValueFormatter: func(v interface{}) string { return strconv.Itoa(int(v.(float64))) },
+			Name:      "Views",
+			NameStyle: chart.StyleShow(),
+			Style:     chart.Style{Show: true},
+			ValueFormatter: func(v interface{}) string {
+				return fmt.Sprintf("%.1f", v.(float64))
+			},
 		},
 	}
 
