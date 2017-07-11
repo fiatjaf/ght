@@ -221,9 +221,14 @@ func drawChart(c echo.Context) error {
 		YValues: make([]float64, len(stats.Views)),
 		YAxis:   chart.YAxisSecondary,
 	}
+	xticks := make([]chart.Tick, len(stats.Views))
 
 	for i, stat := range stats.Views {
 		date, _ := time.Parse("2006-01-02T15:04:05Z", stat.Timestamp)
+		xticks[i] = chart.Tick{
+			Value: float64(date.Unix()),
+			Label: date.Format("Jan 02"),
+		}
 		uniqueSessions.XValues[i] = date
 		totalPageviews.XValues[i] = date
 		uniqueSessions.YValues[i] = float64(stat.Uniques)
@@ -244,6 +249,7 @@ func drawChart(c echo.Context) error {
 			ValueFormatter: func(v interface{}) string {
 				return time.Unix(0, int64(v.(float64))).Format("Jan 02")
 			},
+			// Ticks: xticks,
 		},
 		YAxis: chart.YAxis{
 			Name:      "Unique visitors",
