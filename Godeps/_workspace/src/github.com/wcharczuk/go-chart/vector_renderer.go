@@ -9,6 +9,7 @@ import (
 
 	"golang.org/x/image/font"
 
+	util "github.com/blendlabs/go-util"
 	"github.com/golang/freetype/truetype"
 	"github.com/wcharczuk/go-chart/drawing"
 )
@@ -19,10 +20,11 @@ func SVG(width, height int) (Renderer, error) {
 	canvas := newCanvas(buffer)
 	canvas.Start(width, height)
 	return &vectorRenderer{
-		b: buffer,
-		c: canvas,
-		s: &Style{},
-		p: []string{},
+		b:   buffer,
+		c:   canvas,
+		s:   &Style{},
+		p:   []string{},
+		dpi: DefaultDPI,
 	}, nil
 }
 
@@ -88,8 +90,8 @@ func (vr *vectorRenderer) QuadCurveTo(cx, cy, x, y int) {
 }
 
 func (vr *vectorRenderer) ArcTo(cx, cy int, rx, ry, startAngle, delta float64) {
-	startAngle = Math.RadianAdd(startAngle, _pi2)
-	endAngle := Math.RadianAdd(startAngle, delta)
+	startAngle = util.Math.RadianAdd(startAngle, _pi2)
+	endAngle := util.Math.RadianAdd(startAngle, delta)
 
 	startx := cx + int(rx*math.Sin(startAngle))
 	starty := cy - int(ry*math.Cos(startAngle))
@@ -103,7 +105,7 @@ func (vr *vectorRenderer) ArcTo(cx, cy int, rx, ry, startAngle, delta float64) {
 	endx := cx + int(rx*math.Sin(endAngle))
 	endy := cy - int(ry*math.Cos(endAngle))
 
-	dd := Math.RadiansToDegrees(delta)
+	dd := util.Math.RadiansToDegrees(delta)
 
 	vr.p = append(vr.p, fmt.Sprintf("A %d %d %0.2f 0 1 %d %d", int(rx), int(ry), dd, endx, endy))
 }
@@ -175,7 +177,7 @@ func (vr *vectorRenderer) MeasureText(body string) (box Box) {
 		if vr.c.textTheta == nil {
 			return
 		}
-		box = box.Corners().Rotate(Math.RadiansToDegrees(*vr.c.textTheta)).Box()
+		box = box.Corners().Rotate(util.Math.RadiansToDegrees(*vr.c.textTheta)).Box()
 	}
 	return
 }
@@ -199,7 +201,8 @@ func (vr *vectorRenderer) Save(w io.Writer) error {
 
 func newCanvas(w io.Writer) *canvas {
 	return &canvas{
-		w: w,
+		w:   w,
+		dpi: DefaultDPI,
 	}
 }
 
@@ -229,7 +232,7 @@ func (c *canvas) Text(x, y int, body string, style Style) {
 	if c.textTheta == nil {
 		c.w.Write([]byte(fmt.Sprintf(`<text x="%d" y="%d" style="%s">%s</text>`, x, y, c.styleAsSVG(style), body)))
 	} else {
-		transform := fmt.Sprintf(` transform="rotate(%0.2f,%d,%d)"`, Math.RadiansToDegrees(*c.textTheta), x, y)
+		transform := fmt.Sprintf(` transform="rotate(%0.2f,%d,%d)"`, util.Math.RadiansToDegrees(*c.textTheta), x, y)
 		c.w.Write([]byte(fmt.Sprintf(`<text x="%d" y="%d" style="%s"%s>%s</text>`, x, y, c.styleAsSVG(style), transform, body)))
 	}
 }
@@ -288,7 +291,9 @@ func (c *canvas) styleAsSVG(s Style) string {
 		pieces = append(pieces, "stroke:none")
 	}
 
-	if !fc.IsZero() {
+	if !fnc.IsZero() {
+		pieces = append(pieces, "fill:"+fnc.String())
+	} else if !fc.IsZero() {
 		pieces = append(pieces, "fill:"+fc.String())
 	} else {
 		pieces = append(pieces, "fill:none")
@@ -296,10 +301,6 @@ func (c *canvas) styleAsSVG(s Style) string {
 
 	if fs != 0 {
 		pieces = append(pieces, "font-size:"+fmt.Sprintf("%.1fpx", drawing.PointsToPixels(c.dpi, fs)))
-	}
-
-	if !fnc.IsZero() {
-		pieces = append(pieces, "fill:"+fnc.String())
 	}
 
 	if s.Font != nil {

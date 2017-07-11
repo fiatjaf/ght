@@ -7,12 +7,15 @@ import (
 	"math"
 
 	"github.com/golang/freetype/truetype"
+	util "github.com/wcharczuk/go-chart/util"
 )
 
 // BarChart is a chart that draws bars on a range.
 type BarChart struct {
 	Title      string
 	TitleStyle Style
+
+	ColorPalette ColorPalette
 
 	Width  int
 	Height int
@@ -366,7 +369,7 @@ func (bc BarChart) getAdjustedCanvasBox(r Renderer, canvasBox Box, yrange Range,
 				lines := Text.WrapFit(r, bar.Label, barLabelBox.Width(), axisStyle)
 				linesBox := Text.MeasureLines(r, lines, axisStyle)
 
-				xaxisHeight = Math.MinInt(linesBox.Height()+(2*DefaultXAxisMargin), xaxisHeight)
+				xaxisHeight = util.Math.MinInt(linesBox.Height()+(2*DefaultXAxisMargin), xaxisHeight)
 			}
 		}
 
@@ -407,23 +410,23 @@ func (bc BarChart) getBackgroundStyle() Style {
 
 func (bc BarChart) styleDefaultsBackground() Style {
 	return Style{
-		FillColor:   DefaultBackgroundColor,
-		StrokeColor: DefaultBackgroundStrokeColor,
+		FillColor:   bc.GetColorPalette().BackgroundColor(),
+		StrokeColor: bc.GetColorPalette().BackgroundStrokeColor(),
 		StrokeWidth: DefaultStrokeWidth,
 	}
 }
 
 func (bc BarChart) styleDefaultsBar(index int) Style {
 	return Style{
-		StrokeColor: GetAlternateColor(index),
+		StrokeColor: bc.GetColorPalette().GetSeriesColor(index),
 		StrokeWidth: 3.0,
-		FillColor:   GetAlternateColor(index),
+		FillColor:   bc.GetColorPalette().GetSeriesColor(index),
 	}
 }
 
 func (bc BarChart) styleDefaultsTitle() Style {
 	return bc.TitleStyle.InheritFrom(Style{
-		FontColor:           DefaultTextColor,
+		FontColor:           bc.GetColorPalette().TextColor(),
 		Font:                bc.GetFont(),
 		FontSize:            bc.getTitleFontSize(),
 		TextHorizontalAlign: TextHorizontalAlignCenter,
@@ -433,7 +436,7 @@ func (bc BarChart) styleDefaultsTitle() Style {
 }
 
 func (bc BarChart) getTitleFontSize() float64 {
-	effectiveDimension := Math.MinInt(bc.GetWidth(), bc.GetHeight())
+	effectiveDimension := util.Math.MinInt(bc.GetWidth(), bc.GetHeight())
 	if effectiveDimension >= 2048 {
 		return 48
 	} else if effectiveDimension >= 1024 {
@@ -448,10 +451,10 @@ func (bc BarChart) getTitleFontSize() float64 {
 
 func (bc BarChart) styleDefaultsAxes() Style {
 	return Style{
-		StrokeColor:         DefaultAxisColor,
+		StrokeColor:         bc.GetColorPalette().AxisStrokeColor(),
 		Font:                bc.GetFont(),
 		FontSize:            DefaultAxisFontSize,
-		FontColor:           DefaultAxisColor,
+		FontColor:           bc.GetColorPalette().TextColor(),
 		TextHorizontalAlign: TextHorizontalAlignCenter,
 		TextVerticalAlign:   TextVerticalAlignTop,
 		TextWrap:            TextWrapWord,
@@ -462,4 +465,12 @@ func (bc BarChart) styleDefaultsElements() Style {
 	return Style{
 		Font: bc.GetFont(),
 	}
+}
+
+// GetColorPalette returns the color palette for the chart.
+func (bc BarChart) GetColorPalette() ColorPalette {
+	if bc.ColorPalette != nil {
+		return bc.ColorPalette
+	}
+	return AlternateColorPalette
 }

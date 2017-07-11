@@ -1,8 +1,16 @@
 {
-	"ImportPath": "github.com/fiatjaf/github-stats",
+	"ImportPath": "github.com/fiatjaf/ght",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v75",
 	"Deps": [
+		{
+			"ImportPath": "github.com/blendlabs/go-exception",
+			"Rev": "d3934f941cb001f2b61a69b25dbc76eab3e6ff29"
+		},
+		{
+			"ImportPath": "github.com/blendlabs/go-util",
+			"Rev": "6564ff05cc50b880cde8fa1d4265e7ee3a4aba68"
+		},
 		{
 			"ImportPath": "github.com/golang/freetype/raster",
 			"Comment": "release-137-ge2365df",
@@ -53,13 +61,33 @@
 		},
 		{
 			"ImportPath": "github.com/wcharczuk/go-chart",
-			"Comment": "v2.0-43-g66b99eb",
-			"Rev": "66b99eb8e38fd849fe4a78262d0fac8fcd46dc71"
+			"Comment": "v2.0-69-ga0ea012",
+			"Rev": "a0ea0129036c613675742b96f051df3a1a08821f"
 		},
 		{
 			"ImportPath": "github.com/wcharczuk/go-chart/drawing",
-			"Comment": "v2.0-43-g66b99eb",
-			"Rev": "66b99eb8e38fd849fe4a78262d0fac8fcd46dc71"
+			"Comment": "v2.0-69-ga0ea012",
+			"Rev": "a0ea0129036c613675742b96f051df3a1a08821f"
+		},
+		{
+			"ImportPath": "github.com/wcharczuk/go-chart/matrix",
+			"Comment": "v2.0-69-ga0ea012",
+			"Rev": "a0ea0129036c613675742b96f051df3a1a08821f"
+		},
+		{
+			"ImportPath": "github.com/wcharczuk/go-chart/roboto",
+			"Comment": "v2.0-69-ga0ea012",
+			"Rev": "a0ea0129036c613675742b96f051df3a1a08821f"
+		},
+		{
+			"ImportPath": "github.com/wcharczuk/go-chart/seq",
+			"Comment": "v2.0-69-ga0ea012",
+			"Rev": "a0ea0129036c613675742b96f051df3a1a08821f"
+		},
+		{
+			"ImportPath": "github.com/wcharczuk/go-chart/util",
+			"Comment": "v2.0-69-ga0ea012",
+			"Rev": "a0ea0129036c613675742b96f051df3a1a08821f"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/acme",
@@ -71,19 +99,19 @@
 		},
 		{
 			"ImportPath": "golang.org/x/image/draw",
-			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+			"Rev": "426cfd8eeb6e08ab1932954e09e3c2cb2bc6e36d"
 		},
 		{
 			"ImportPath": "golang.org/x/image/font",
-			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+			"Rev": "426cfd8eeb6e08ab1932954e09e3c2cb2bc6e36d"
 		},
 		{
 			"ImportPath": "golang.org/x/image/math/f64",
-			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+			"Rev": "426cfd8eeb6e08ab1932954e09e3c2cb2bc6e36d"
 		},
 		{
 			"ImportPath": "golang.org/x/image/math/fixed",
-			"Rev": "b7f8df6bc082334698d4505fb85fa05e99156b72"
+			"Rev": "426cfd8eeb6e08ab1932954e09e3c2cb2bc6e36d"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",
@@ -123,14 +151,6 @@
 			"ImportPath": "gopkg.in/redis.v5/internal/proto",
 			"Comment": "v5.2.4",
 			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
-		},
-		{
-			"ImportPath": "github.com/blendlabs/go-util",
-			"Rev": "6564ff05cc50b880cde8fa1d4265e7ee3a4aba68"
-		},
-		{
-			"ImportPath": "github.com/blendlabs/go-exception",
-			"Rev": "d3934f941cb001f2b61a69b25dbc76eab3e6ff29"
 		}
 	]
 }

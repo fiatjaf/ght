@@ -1,1 +1,1 @@
-web: github-stats
+web: ght

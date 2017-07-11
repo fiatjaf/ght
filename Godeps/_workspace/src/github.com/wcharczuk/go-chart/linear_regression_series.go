@@ -1,6 +1,11 @@
 package chart
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/wcharczuk/go-chart/seq"
+	util "github.com/wcharczuk/go-chart/util"
+)
 
 // LinearRegressionSeries is a series that plots the n-nearest neighbors
 // linear regression for the values.
@@ -9,9 +14,9 @@ type LinearRegressionSeries struct {
 	Style Style
 	YAxis YAxisType
 
-	Window      int
+	Limit       int
 	Offset      int
-	InnerSeries ValueProvider
+	InnerSeries ValuesProvider
 
 	m       float64
 	b       float64
@@ -36,22 +41,22 @@ func (lrs LinearRegressionSeries) GetYAxis() YAxisType {
 
 // Len returns the number of elements in the series.
 func (lrs LinearRegressionSeries) Len() int {
-	return Math.MinInt(lrs.GetWindow(), lrs.InnerSeries.Len()-lrs.GetOffset())
+	return util.Math.MinInt(lrs.GetLimit(), lrs.InnerSeries.Len()-lrs.GetOffset())
 }
 
-// GetWindow returns the window size.
-func (lrs LinearRegressionSeries) GetWindow() int {
-	if lrs.Window == 0 {
+// GetLimit returns the window size.
+func (lrs LinearRegressionSeries) GetLimit() int {
+	if lrs.Limit == 0 {
 		return lrs.InnerSeries.Len()
 	}
-	return lrs.Window
+	return lrs.Limit
 }
 
-// GetEndIndex returns the effective window end.
+// GetEndIndex returns the effective limit end.
 func (lrs LinearRegressionSeries) GetEndIndex() int {
-	offset := lrs.GetOffset() + lrs.Len()
+	windowEnd := lrs.GetOffset() + lrs.GetLimit()
 	innerSeriesLastIndex := lrs.InnerSeries.Len() - 1
-	return Math.MinInt(offset, innerSeriesLastIndex)
+	return util.Math.MinInt(windowEnd, innerSeriesLastIndex)
 }
 
 // GetOffset returns the data offset.
@@ -62,8 +67,8 @@ func (lrs LinearRegressionSeries) GetOffset() int {
 	return lrs.Offset
 }
 
-// GetValue gets a value at a given index.
-func (lrs *LinearRegressionSeries) GetValue(index int) (x, y float64) {
+// GetValues gets a value at a given index.
+func (lrs *LinearRegressionSeries) GetValues(index int) (x, y float64) {
 	if lrs.InnerSeries == nil || lrs.InnerSeries.Len() == 0 {
 		return
 	}
@@ -71,15 +76,14 @@ func (lrs *LinearRegressionSeries) GetValue(index int) (x, y float64) {
 		lrs.computeCoefficients()
 	}
 	offset := lrs.GetOffset()
-	effectiveIndex := Math.MinInt(index+offset, lrs.InnerSeries.Len())
-	x, y = lrs.InnerSeries.GetValue(effectiveIndex)
+	effectiveIndex := util.Math.MinInt(index+offset, lrs.InnerSeries.Len())
+	x, y = lrs.InnerSeries.GetValues(effectiveIndex)
 	y = (lrs.m * lrs.normalize(x)) + lrs.b
 	return
 }
 
-// GetLastValue computes the last moving average value but walking back window size samples,
-// and recomputing the last moving average chunk.
-func (lrs *LinearRegressionSeries) GetLastValue() (x, y float64) {
+// GetLastValues computes the last linear regression value.
+func (lrs *LinearRegressionSeries) GetLastValues() (x, y float64) {
 	if lrs.InnerSeries == nil || lrs.InnerSeries.Len() == 0 {
 		return
 	}
@@ -87,7 +91,7 @@ func (lrs *LinearRegressionSeries) GetLastValue() (x, y float64) {
 		lrs.computeCoefficients()
 	}
 	endIndex := lrs.GetEndIndex()
-	x, y = lrs.InnerSeries.GetValue(endIndex)
+	x, y = lrs.InnerSeries.GetValues(endIndex)
 	y = (lrs.m * lrs.normalize(x)) + lrs.b
 	return
 }
@@ -103,19 +107,18 @@ func (lrs *LinearRegressionSeries) computeCoefficients() {
 
 	p := float64(endIndex - startIndex)
 
-	xvalues := NewRingBufferWithCapacity(lrs.Len())
+	xvalues := seq.NewBufferWithCapacity(lrs.Len())
 	for index := startIndex; index < endIndex; index++ {
-
-		x, _ := lrs.InnerSeries.GetValue(index)
+		x, _ := lrs.InnerSeries.GetValues(index)
 		xvalues.Enqueue(x)
 	}
 
-	lrs.avgx = xvalues.Average()
-	lrs.stddevx = xvalues.StdDev()
+	lrs.avgx = seq.Seq{Provider: xvalues}.Average()
+	lrs.stddevx = seq.Seq{Provider: xvalues}.StdDev()
 
 	var sumx, sumy, sumxx, sumxy float64
 	for index := startIndex; index < endIndex; index++ {
-		x, y := lrs.InnerSeries.GetValue(index)
+		x, y := lrs.InnerSeries.GetValues(index)
 
 		x = lrs.normalize(x)
 

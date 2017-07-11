@@ -7,12 +7,15 @@ import (
 	"math"
 
 	"github.com/golang/freetype/truetype"
+	util "github.com/wcharczuk/go-chart/util"
 )
 
 // Chart is what we're drawing.
 type Chart struct {
 	Title      string
 	TitleStyle Style
+
+	ColorPalette ColorPalette
 
 	Width  int
 	Height int
@@ -175,10 +178,10 @@ func (c Chart) getRanges() (xrange, yrange, yrangeAlt Range) {
 	for _, s := range c.Series {
 		if s.GetStyle().IsZero() || s.GetStyle().Show {
 			seriesAxis := s.GetYAxis()
-			if bvp, isBoundedValueProvider := s.(BoundedValueProvider); isBoundedValueProvider {
+			if bvp, isBoundedValuesProvider := s.(BoundedValuesProvider); isBoundedValuesProvider {
 				seriesLength := bvp.Len()
 				for index := 0; index < seriesLength; index++ {
-					vx, vy1, vy2 := bvp.GetBoundedValue(index)
+					vx, vy1, vy2 := bvp.GetBoundedValues(index)
 
 					minx = math.Min(minx, vx)
 					maxx = math.Max(maxx, vx)
@@ -196,10 +199,10 @@ func (c Chart) getRanges() (xrange, yrange, yrangeAlt Range) {
 						seriesMappedToSecondaryAxis = true
 					}
 				}
-			} else if vp, isValueProvider := s.(ValueProvider); isValueProvider {
+			} else if vp, isValuesProvider := s.(ValuesProvider); isValuesProvider {
 				seriesLength := vp.Len()
 				for index := 0; index < seriesLength; index++ {
-					vx, vy := vp.GetValue(index)
+					vx, vy := vp.GetValues(index)
 
 					minx = math.Min(minx, vx)
 					maxx = math.Max(maxx, vx)
@@ -263,8 +266,8 @@ func (c Chart) getRanges() (xrange, yrange, yrangeAlt Range) {
 		// only round if we're showing the axis
 		if c.YAxis.Style.Show {
 			delta := yrange.GetDelta()
-			roundTo := Math.GetRoundToForDelta(delta)
-			rmin, rmax := Math.RoundDown(yrange.GetMin(), roundTo), Math.RoundUp(yrange.GetMax(), roundTo)
+			roundTo := util.Math.GetRoundToForDelta(delta)
+			rmin, rmax := util.Math.RoundDown(yrange.GetMin(), roundTo), util.Math.RoundUp(yrange.GetMax(), roundTo)
 
 			yrange.SetMin(rmin)
 			yrange.SetMax(rmax)
@@ -285,8 +288,8 @@ func (c Chart) getRanges() (xrange, yrange, yrangeAlt Range) {
 
 		if c.YAxisSecondary.Style.Show {
 			delta := yrangeAlt.GetDelta()
-			roundTo := Math.GetRoundToForDelta(delta)
-			rmin, rmax := Math.RoundDown(yrangeAlt.GetMin(), roundTo), Math.RoundUp(yrangeAlt.GetMax(), roundTo)
+			roundTo := util.Math.GetRoundToForDelta(delta)
+			rmin, rmax := util.Math.RoundDown(yrangeAlt.GetMin(), roundTo), util.Math.RoundUp(yrangeAlt.GetMax(), roundTo)
 			yrangeAlt.SetMin(rmin)
 			yrangeAlt.SetMax(rmax)
 		}
@@ -352,13 +355,13 @@ func (c Chart) getValueFormatters() (x, y, ya ValueFormatter) {
 		}
 	}
 	if c.XAxis.ValueFormatter != nil {
-		x = c.XAxis.ValueFormatter
+		x = c.XAxis.GetValueFormatter()
 	}
 	if c.YAxis.ValueFormatter != nil {
-		y = c.YAxis.ValueFormatter
+		y = c.YAxis.GetValueFormatter()
 	}
 	if c.YAxisSecondary.ValueFormatter != nil {
-		ya = c.YAxisSecondary.ValueFormatter
+		ya = c.YAxisSecondary.GetValueFormatter()
 	}
 	return
 }
@@ -490,7 +493,7 @@ func (c Chart) drawSeries(r Renderer, canvasBox Box, xrange, yrange, yrangeAlt R
 func (c Chart) drawTitle(r Renderer) {
 	if len(c.Title) > 0 && c.TitleStyle.Show {
 		r.SetFont(c.TitleStyle.GetFont(c.GetFont()))
-		r.SetFontColor(c.TitleStyle.GetFontColor(DefaultTextColor))
+		r.SetFontColor(c.TitleStyle.GetFontColor(c.GetColorPalette().TextColor()))
 		titleFontSize := c.TitleStyle.GetFontSize(DefaultTitleFontSize)
 		r.SetFontSize(titleFontSize)
 
@@ -508,25 +511,24 @@ func (c Chart) drawTitle(r Renderer) {
 
 func (c Chart) styleDefaultsBackground() Style {
 	return Style{
-		FillColor:   DefaultBackgroundColor,
-		StrokeColor: DefaultBackgroundStrokeColor,
+		FillColor:   c.GetColorPalette().BackgroundColor(),
+		StrokeColor: c.GetColorPalette().BackgroundStrokeColor(),
 		StrokeWidth: DefaultBackgroundStrokeWidth,
 	}
 }
 
 func (c Chart) styleDefaultsCanvas() Style {
 	return Style{
-		FillColor:   DefaultCanvasColor,
-		StrokeColor: DefaultCanvasStrokeColor,
+		FillColor:   c.GetColorPalette().CanvasColor(),
+		StrokeColor: c.GetColorPalette().CanvasStrokeColor(),
 		StrokeWidth: DefaultCanvasStrokeWidth,
 	}
 }
 
 func (c Chart) styleDefaultsSeries(seriesIndex int) Style {
-	strokeColor := GetDefaultColor(seriesIndex)
 	return Style{
-		DotColor:    strokeColor,
-		StrokeColor: strokeColor,
+		DotColor:    c.GetColorPalette().GetSeriesColor(seriesIndex),
+		StrokeColor: c.GetColorPalette().GetSeriesColor(seriesIndex),
 		StrokeWidth: DefaultSeriesLineWidth,
 		Font:        c.GetFont(),
 		FontSize:    DefaultFontSize,
@@ -536,9 +538,9 @@ func (c Chart) styleDefaultsSeries(seriesIndex int) Style {
 func (c Chart) styleDefaultsAxes() Style {
 	return Style{
 		Font:        c.GetFont(),
-		FontColor:   DefaultAxisColor,
+		FontColor:   c.GetColorPalette().TextColor(),
 		FontSize:    DefaultAxisFontSize,
-		StrokeColor: DefaultAxisColor,
+		StrokeColor: c.GetColorPalette().AxisStrokeColor(),
 		StrokeWidth: DefaultAxisLineWidth,
 	}
 }
@@ -547,6 +549,14 @@ func (c Chart) styleDefaultsElements() Style {
 	return Style{
 		Font: c.GetFont(),
 	}
+}
+
+// GetColorPalette returns the color palette for the chart.
+func (c Chart) GetColorPalette() ColorPalette {
+	if c.ColorPalette != nil {
+		return c.ColorPalette
+	}
+	return DefaultColorPalette
 }
 
 // Box returns the chart bounds as a box.
