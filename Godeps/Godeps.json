@@ -123,6 +123,14 @@
 			"ImportPath": "gopkg.in/redis.v5/internal/proto",
 			"Comment": "v5.2.4",
 			"Rev": "2fe9c5cc0a8da9faeba3a45511a4ece8f7e37dc2"
+		},
+		{
+			"ImportPath": "github.com/blendlabs/go-util",
+			"Rev": "6564ff05cc50b880cde8fa1d4265e7ee3a4aba68"
+		},
+		{
+			"ImportPath": "github.com/blendlabs/go-exception",
+			"Rev": "d3934f941cb001f2b61a69b25dbc76eab3e6ff29"
 		}
 	]
 }

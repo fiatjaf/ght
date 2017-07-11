@@ -190,9 +190,15 @@ func drawChart(c echo.Context) error {
 		Name: "Unique visitors",
 		Style: chart.Style{
 			Show:        true,
-			StrokeWidth: 3.2,
+			StrokeWidth: 5.2,
 			StrokeColor: drawing.Color{52, 116, 219, 100},
-			FillColor:   drawing.Color{52, 116, 219, 65},
+			FillColor:   drawing.Color{52, 116, 219, 37},
+			DotColorProvider: func(_, _ chart.Range, _ int, _, _ float64) drawing.Color {
+				return drawing.Color{52, 116, 219, 100}
+			},
+			DotWidthProvider: func(_, _ chart.Range, _ int, _, _ float64) float64 {
+				return 5
+			},
 		},
 		XValues: make([]time.Time, len(stats.Views)),
 		YValues: make([]float64, len(stats.Views)),
@@ -202,8 +208,14 @@ func drawChart(c echo.Context) error {
 		Name: "Views",
 		Style: chart.Style{
 			Show:        true,
-			StrokeWidth: 3.1,
+			StrokeWidth: 4.3,
 			StrokeColor: drawing.Color{21, 198, 148, 100},
+			DotColorProvider: func(_, _ chart.Range, _ int, _, _ float64) drawing.Color {
+				return drawing.Color{21, 198, 148, 100}
+			},
+			DotWidthProvider: func(_, _ chart.Range, _ int, _, _ float64) float64 {
+				return 5
+			},
 		},
 		XValues: make([]time.Time, len(stats.Views)),
 		YValues: make([]float64, len(stats.Views)),
