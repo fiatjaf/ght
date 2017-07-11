@@ -124,8 +124,9 @@ func authorizeCallback(c echo.Context) error {
 }
 
 type GitHubStats struct {
-	Count   int `json:"count"`
-	Uniques int `json:"uniques"`
+	Expires string `json:"expires"`
+	Count   int    `json:"count"`
+	Uniques int    `json:"uniques"`
 	Views   []struct {
 		Count     int    `json:"count"`
 		Timestamp string `json:"timestamp"`
@@ -176,8 +177,10 @@ func drawChart(c echo.Context) error {
 		}
 
 		// cache results on redis
+		expiration := time.Hour * 2
+		stats.Expires = time.Now().Add(time.Hour * 2).Format(time.RFC1123)
 		cache, _ := json.Marshal(stats)
-		if err = rds.Set(rediskey, cache, time.Hour*2).Err(); err != nil {
+		if err = rds.Set(rediskey, cache, expiration).Err(); err != nil {
 			log.Print("failed to cache results on redis: ", err)
 		}
 	}
@@ -253,6 +256,8 @@ func drawChart(c echo.Context) error {
 	}
 
 	c.Response().Header().Set("Content-Type", "image/png")
+	c.Response().Header().Set("Cache-Control", "no-cache")
+	c.Response().Header().Set("Expires", stats.Expires)
 	graph.Render(chart.PNG, c.Response())
 	return nil
 }
