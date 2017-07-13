@@ -238,12 +238,19 @@ func drawChart(c echo.Context) error {
 	w := 800
 	h := 300
 	graph := chart.Chart{
+		Title: repo + " visitors",
+		TitleStyle: chart.Style{
+			Show:      true,
+			FontColor: drawing.Color{52, 23, 119, 100},
+		},
+		Background: chart.Style{
+			Padding: chart.Box{Top: 50, Right: 10, Bottom: 10, Left: 27},
+		},
+
 		Width:  w,
 		Height: h,
+
 		Series: []chart.Series{uniqueSessions, totalPageviews},
-		Background: chart.Style{
-			Padding: chart.Box{Top: 10, Right: 10, Bottom: 10, Left: 27},
-		},
 		XAxis: chart.XAxis{
 			Style: chart.Style{Show: true},
 			ValueFormatter: func(v interface{}) string {
